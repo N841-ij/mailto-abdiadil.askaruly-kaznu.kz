@@ -1,0 +1,164 @@
+// Транспорт үшін интерфейс
+interface Transport {
+    boolean canTravel(String terrain);
+    boolean travel(int distance, String terrain);
+}
+
+// Машина үшін класс
+class Car implements Transport {
+    private String name;
+    private double fuel;
+
+    public Car(double fuel) {
+        this.name = "Машина";
+        this.fuel = fuel;
+    }
+
+    @Override
+    public boolean canTravel(String terrain) {
+        return !terrain.equals("густой лес") && !terrain.equals("болото");
+    }
+
+    @Override
+    public boolean travel(int distance, String terrain) {
+        if (canTravel(terrain) && fuel > 0) {
+            fuel -= distance * 0.1; // отын шығыны
+            System.out.printf("%s %d км %s бойынша жүрді. Қалған отын: %.1f л.%n", name, distance, terrain, fuel);
+            return true;
+        }
+        System.out.println("Машинамен жүре алмады.");
+        return false;
+    }
+}
+
+// Лошадь үшін класс
+class Horse implements Transport {
+    private String name;
+    private int energy;
+
+    public Horse(int energy) {
+        this.name = "Лошадь";
+        this.energy = energy;
+    }
+
+    @Override
+    public boolean canTravel(String terrain) {
+        return !terrain.equals("болото");
+    }
+
+    @Override
+    public boolean travel(int distance, String terrain) {
+        if (canTravel(terrain) && energy >= distance) {
+            energy -= distance; // күш шығыны
+            System.out.printf("%s %d км %s бойынша жүрді. Қалған күш: %d.%n", name, distance, terrain, energy);
+            return true;
+        }
+        System.out.println("Лошадьпен жүре алмады.");
+        return false;
+    }
+}
+
+// Велосипед үшін класс
+class Bicycle implements Transport {
+    private String name;
+
+    public Bicycle() {
+        this.name = "Велосипед";
+    }
+
+    @Override
+    public boolean canTravel(String terrain) {
+        return true; // велосипед кез келген жерге жүре алады
+    }
+
+    @Override
+    public boolean travel(int distance, String terrain) {
+        System.out.printf("%s %d км %s бойынша жүрді.%n", name, distance, terrain);
+        return true;
+    }
+}
+
+// Вездеход үшін класс
+class AllTerrainVehicle implements Transport {
+    private String name;
+    private double fuel;
+
+    public AllTerrainVehicle(double fuel) {
+        this.name = "Вездеход";
+        this.fuel = fuel;
+    }
+
+    @Override
+    public boolean canTravel(String terrain) {
+        return true; // вездеход кез келген жерге жүре алады
+    }
+
+    @Override
+    public boolean travel(int distance, String terrain) {
+        if (fuel > 0) {
+            fuel -= distance * 0.2; // отын шығыны
+            System.out.printf("%s %d км %s бойынша жүрді. Қалған отын: %.1f л.%n", name, distance, terrain, fuel);
+            return true;
+        }
+        System.out.println("Вездеходпен жүре алмады.");
+        return false;
+    }
+}
+
+// Адам үшін класс
+class Person {
+    private String name;
+    private Transport currentTransport;
+
+    public Person(String name) {
+        this.name = name;
+    }
+
+    public void sitOnTransport(Transport transport) {
+        this.currentTransport = transport;
+        System.out.printf("%s %s-ға отырды.%n", name, ((Car) transport).getClass().getSimpleName());
+    }
+
+    public void standUp() {
+        System.out.printf("%s %s-дан тұрды.%n", name, ((Car) currentTransport).getClass().getSimpleName());
+        this.currentTransport = null;
+    }
+
+    public void move(int distance, String terrain) {
+        if (currentTransport != null) {
+            currentTransport.travel(distance, terrain);
+        } else {
+            System.out.printf("%s %d км жаяу %s бойынша жүрді.%n", name, distance, terrain);
+        }
+    }
+}
+
+// Тестілеу үшін негізгі класс
+public class Main {
+    public static void main(String[] args) {
+        Person person = new Person("Иван");
+
+        Transport car = new Car(50);
+        Transport horse = new Horse(20);
+        Transport bicycle = new Bicycle();
+        Transport allTerrainVehicle = new AllTerrainVehicle(80);
+
+        person.sitOnTransport(car);
+        person.move(100, "равнина");
+        person.move(50, "густой лес");
+        person.standUp();
+
+        person.sitOnTransport(horse);
+        person.move(10, "равнина");
+        person.move(10, "болото");
+        person.standUp();
+
+        person.sitOnTransport(bicycle);
+        person.move(15, "густой лес");
+        person.standUp();
+
+        person.sitOnTransport(allTerrainVehicle);
+        person.move(30, "болото");
+        person.standUp();
+    }
+}
