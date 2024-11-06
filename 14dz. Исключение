@@ -1,0 +1,64 @@
+// Массив өлшемі қате болған жағдайда шығатын қолданушылық ерекшелік
+class AppArraySizeException extends Exception {
+    public AppArraySizeException(String message) {
+        super(message); // Әке класс Exception-ге хабарламаны беру
+    }
+}
+
+// Массивтің элементі сан емес болған жағдайда шығатын қолданушылық ерекшелік
+class AppArrayDataException extends Exception {
+    public AppArrayDataException(String message) {
+        super(message); // Әке класс Exception-ге хабарламаны беру
+    }
+}
+
+// Массивті өңдейтін класс
+public class ArrayProcessor {
+
+    // Массивті өңдейтін әдіс, 4x4 өлшемді жолдардан тұратын массив қабылдайды
+    public static int processArray(String[][] array) throws AppArraySizeException, AppArrayDataException {
+        // Массивтің өлшемін тексеру
+        if (array.length != 4 || array[0].length != 4) {
+            throw new AppArraySizeException("Массив өлшемі 4x4 болуы керек"); // Өлшемі дұрыс болмаса, ерекшелік шығару
+        }
+
+        int sum = 0; // Барлық элементтердің қосындысын сақтау үшін айнымалы
+
+        // Массивті өту және әрбір элементті өңдеу
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                try {
+                    sum += Integer.parseInt(array[i][j]); // Элементті санға түрлендіріп, қосу
+                } catch (NumberFormatException e) {
+                    // Егер түрлендіру мүмкін болмаса, ерекшелік шығару
+                    throw new AppArrayDataException("Қате " + i + "-қатар, " + j + "-бағанда: '" + array[i][j] + "' сан емес");
+                }
+            }
+        }
+
+        return sum; // Барлық элементтердің қосындысын қайтару
+    }
+}
+
+// Бағдарламаның негізгі класы
+public class Main {
+    public static void main(String[] args) {
+        // 4x4 өлшемді массивті анықтау
+        String[][] array = {
+            {"1", "2", "3", "4"},
+            {"5", "6", "7", "8"},
+            {"9", "10", "11", "12"},
+            {"13", "14", "15", "16"}
+        };
+
+        try {
+            // Массивті өңдеп, қосындыны алу
+            int result = ArrayProcessor.processArray(array);
+            System.out.println("Массив элементтерінің қосындысы: " + result); // Қосындыны экранға шығару
+        } catch (AppArraySizeException e) {
+            System.err.println("Қате: " + e.getMessage()); // Массив өлшемі қате болғанда хабарлама шығару
+        } catch (AppArrayDataException e) {
+            System.err.println("Массивтегі деректер қатесі: " + e.getMessage()); // Массив дерегі қате болғанда хабарлама шығару
+        }
+    }
+}
