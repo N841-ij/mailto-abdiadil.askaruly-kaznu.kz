@@ -1,0 +1,185 @@
+import java.util.ArrayList;
+
+public class Solution {
+
+    // Тізім жасау әдісі, min және max аралығындағы сандарды қосады
+    public static ArrayList<Integer> generateRange(int min, int max) {
+        ArrayList<Integer> result = new ArrayList<>();
+        // min мен max арасындағы барлық сандарды қосу
+        for (int i = min; i <= max; i++) {
+            result.add(i);
+        }
+        return result; // Нәтижені қайтару
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> range = generateRange(3, 8);
+        System.out.println(range);  // [3, 4, 5, 6, 7, 8]
+    }
+}
+
+Тапсырма 2: 5-тен үлкен сандардың қосындысын табу
+Мақсат: Тізімдегі 5-тен үлкен сандардың қосындысын табу.
+
+java
+Копировать код
+import java.util.List;
+
+public class Solution {
+
+    // 5-тен үлкен сандардың қосындысын табатын әдіс
+    public static int sumGreaterThanFive(List<Integer> numbers) {
+        int sum = 0; // Қосындыны бастау
+        // Әр элементті тексеру
+        for (int number : numbers) {
+            if (number > 5) {
+                sum += number; // 5-тен үлкен болса, қосу
+            }
+        }
+        return sum; // Қосындыны қайтару
+    }
+
+    public static void main(String[] args) {
+        List<Integer> numbers = List.of(1, 6, 3, 8, 5, 7);
+        System.out.println(sumGreaterThanFive(numbers));  // 21
+    }
+}
+
+Тапсырма 3: Барлық элементтерді көрсетілген санмен ауыстыру
+Мақсат: Тізімдегі барлық элементтерді бір санмен ауыстыру.
+
+java
+Копировать код
+import java.util.List;
+
+public class Solution {
+
+    // Әр элементті берілген санмен ауыстыратын әдіс
+    public static void replaceWithNumber(int number, List<Integer> numbers) {
+        for (int i = 0; i < numbers.size(); i++) {
+            numbers.set(i, number); // Әр элементті new number-мен ауыстыру
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Integer> numbers = List.of(1, 2, 3, 4);
+        replaceWithNumber(0, numbers); // Тізімді барлық 0-дермен ауыстыру
+        System.out.println(numbers);  // [0, 0, 0, 0]
+    }
+}
+
+
+Тапсырма 4: Әр элементті көрсетілген санға қосу
+Мақсат: Тізімдегі әр элементке көрсетілген санды қосу.
+
+java
+Копировать код
+import java.util.List;
+
+public class Solution {
+
+    // Әр элементке берілген санды қосу әдісі
+    public static void increaseEachElement(int increment, List<Integer> numbers) {
+        for (int i = 0; i < numbers.size(); i++) {
+            numbers.set(i, numbers.get(i) + increment); // Әр элементке санды қосу
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Integer> numbers = List.of(1, 2, 3, 4);
+        increaseEachElement(5, numbers); // Әр элементке 5 қосу
+        System.out.println(numbers);  // [6, 7, 8, 9]
+    }
+}
+
+Тапсырма 5: Сотрудник класын құру
+Мақсат: Сотрудник деген класс жасау, оның ішінде аты мен жасы деген өрістер болады.
+
+java
+Копировать код
+public class Employee {
+    private String name;
+    private int age;
+
+    // Конструктор
+    public Employee(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    // Геттерлер
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + age + ")";
+    }
+}
+
+Тапсырма 6: Қызметкерлердің аттарын шығару
+Мақсат: Қызметкерлердің аттарын тізім ретінде қайтаратын әдіс жасау.
+
+java
+Копировать код
+import java.util.List;
+import java.util.ArrayList;
+
+public class Solution {
+
+    // Қызметкерлердің аттарын шығару
+    public static List<String> getEmployeeNames(List<Employee> employees) {
+        List<String> names = new ArrayList<>();
+        for (Employee employee : employees) {
+            names.add(employee.getName()); // Әр қызметкердің атын қосу
+        }
+        return names;
+    }
+
+    public static void main(String[] args) {
+        List<Employee> employees = List.of(
+            new Employee("John", 30),
+            new Employee("Alice", 25),
+            new Employee("Bob", 40)
+        );
+        System.out.println(getEmployeeNames(employees));  // [John, Alice, Bob]
+    }
+}
+
+Тапсырма 7: Жасы ең кіші қызметкерді табу
+Мақсат: Қызметкерлердің ішінен ең жасы кіші қызметкерді табу.
+
+java
+Копировать код
+import java.util.List;
+
+public class Solution {
+
+    // Ең жас қызметкерді табатын әдіс
+    public static Employee findYoungestEmployee(List<Employee> employees) {
+        if (employees.isEmpty()) {
+            return null; // Егер тізім бос болса, null қайтарылады
+        }
+        Employee youngest = employees.get(0); // Алғашқы қызметкерді ең жас деп санаймыз
+        for (Employee employee : employees) {
+            if (employee.getAge() < youngest.getAge()) {
+                youngest = employee; // Егер жаңа қызметкер жас болса, оны ең жас деп белгілейміз
+            }
+        }
+        return youngest; // Ең жас қызметкерді қайтару
+    }
+
+    public static void main(String[] args) {
+        List<Employee> employees = List.of(
+            new Employee("John", 30),
+            new Employee("Alice", 25),
+            new Employee("Bob", 40)
+        );
+        System.out.println(findYoungestEmployee(employees));  // Alice (25)
+    }
+}
