@@ -1,0 +1,181 @@
+interface Callable {
+    void call();
+}
+
+class ExceptionTask {
+    private ExceptionTask() {
+    }
+
+    public static <T extends Throwable> boolean invokesException(Class<T> clazz, Callable callable) {
+        try {
+            callable.call();  // Выполняем код, который может бросить исключение
+            return false;     // Если исключение не выброшено, возвращаем false
+        } catch (Throwable e) {
+            // Проверяем, соответствует ли тип исключения тому, что мы ожидаем
+            return clazz.isInstance(e);
+        }
+    }
+}
+
+public class ExceptionTaskMain {
+    public static void main(String[] args) {
+        System.out.println("Этот вызов бросает нужное исключение: " +
+                ExceptionTask.invokesException(IllegalArgumentException.class, () -> {
+                    throw new IllegalArgumentException();
+                }));
+        System.out.println("Этот вызов не бросает исключение: " +
+                ExceptionTask.invokesException(IllegalArgumentException.class, () -> {
+                    var a = 2 * 2;
+                }));
+        System.out.println("Этот вызов бросает не то исключение: " +
+                ExceptionTask.invokesException(IllegalArgumentException.class, () -> {
+                    throw new ArrayIndexOutOfBoundsException();
+                }));
+    }
+}
+
+
+import java.util.Arrays;
+
+public class ExceptionTaskDivide {
+    private ExceptionTaskDivide() {}
+
+    public static int[] divide(int... numbers) {
+        // Проверяем, что количество чисел чётное
+        if (numbers.length % 2 != 0) {
+            throw new IllegalArgumentException("Количество элементов должно быть чётным");
+        }
+
+        int[] result = new int[numbers.length / 2]; // Массив для хранения результатов деления
+        for (int i = 0; i < numbers.length; i += 2) {
+            try {
+                // Выполняем деление чисел попарно
+                result[i / 2] = numbers[i] / numbers[i + 1];
+            } catch (ArithmeticException e) {
+                // Если делитель равен нулю, записываем 0
+                result[i / 2] = 0;
+            }
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Делим попарно 4, 2, 4, 1: " + Arrays.toString(divide(4, 2, 4, 1))); 
+        System.out.println("Делим попарно 0, 2, 0, 0: " + Arrays.toString(divide(0, 2, 0, 0))); 
+        System.out.println("Делим попарно 10, 2, 4: " + Arrays.toString(divide(10, 2, 4))); // Это выбросит исключение
+    }
+}
+
+
+
+
+public class ExceptionTaskCustomException {
+
+    public static int simpleAbs(int left, int right) throws CustomException {
+        if (left < right) {
+            throw new CustomException("my custom exception");
+        }
+        return left - right;
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("No exception: " + simpleAbs(3, 2));  // Это не вызовет исключение
+        try {
+            System.out.println("Exception: " + simpleAbs(1, 2));  // Это вызовет исключение
+            System.out.println("Исключение не брошено, ошибка!");
+        } catch (CustomException e) {
+            System.out.println("Успешно брошено исключение: " + e.getMessage());
+        }
+    }
+}
+
+class CustomException extends Exception {
+    // Конструктор, который принимает строку сообщения
+    public CustomException(String message) {
+        super(message);  // Передаем сообщение родительскому конструктору
+    }
+}
+
+
+
+
+public class ExceptionTaskCustomException {
+
+    // Метод, который проверяет абсолютное значение разницы или выбрасывает исключение
+    public static int simpleAbs(int left, int right) throws CustomException {
+        if (left < right) {
+            throw new CustomException("my custom exception");
+        }
+        // Возвращаем абсолютное значение разницы
+        return Math.abs(left - right);
+    }
+
+    public static void main(String[] args) {
+        // Пример, когда исключение не выбрасывается
+        System.out.println("No exception: " + simpleAbs(3, 2));  // Возвращает 1 (3 - 2)
+
+        // Пример, когда выбрасывается исключение
+        try {
+            System.out.println("Exception: " + simpleAbs(1, 2));  // Здесь выбрасывается исключение
+            System.out.println("Исключение не брошено, ошибка!");  // Это не будет выполнено
+        } catch (CustomException e) {
+            // Обработка исключения
+            System.out.println("Успешно брошено исключение: " + e.getMessage());
+        }
+    }
+}
+
+// Класс пользовательского исключения
+class CustomException extends Exception {
+
+    // Конструктор, который передает сообщение в родительский класс Exception
+    public CustomException(String message) {
+        super(message);  // Сообщение будет доступно через getMessage()
+    }
+}
+
+
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class ExceptionTaskGetAllElements {
+
+    // Метод, который будет выбрасывать исключения, если встречаются буквы 'Ю' или 'Ё'
+    private static String processString(String item) {
+        if (item.contains("Ю")) {
+            throw new IllegalArgumentException("Обнаружена буква Ю!");
+        }
+        if (item.contains("Ё")) {
+            throw new NullPointerException("Ё не разрешено!");
+        }
+        return item;
+    }
+
+    // Метод, который обрабатывает массив строк и записывает результаты или сообщения об ошибках
+    public static String[] getAllElements(String[] input) {
+        var result = new ArrayList<String>(input.length);
+        
+        // Итерируем по каждому элементу массива
+        for (String item : input) {
+            try {
+                // Пытаемся обработать строку
+                result.add(processString(item));
+            } catch (Exception e) {
+                // Если возникло исключение, добавляем сообщение исключения
+                result.add(e.getMessage());
+            }
+            // В любом случае добавляем "end"
+            result.add("end");
+        }
+
+        // Преобразуем результат в массив и возвращаем
+        return result.toArray(new String[0]);
+    }
+
+    // Основной метод
+    public static void main(String[] args) {
+        System.out.println(Arrays.toString(getAllElements(new String[]{"Ю", "б", "в", "Ю", "Д", "ЁЖ"})));
+    }
+}
